@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>Nivel 2 - Experiencia Especial</title>
+
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;700&family=Montserrat:wght@300;400;600&display=swap');
+
+body{
+  margin:0;
+  height:100vh;
+  background: radial-gradient(circle at top, #2a1a17, #0d0706 85%);
+  font-family: 'Montserrat', sans-serif;
+  color:#f5e9e2;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  overflow:hidden;
+}
+
+.screen{
+  text-align:center;
+  max-width:720px;
+  padding:40px;
+  animation: fadeIn 1.2s ease;
+}
+
+h1{
+  font-family:'Playfair Display', serif;
+  font-size:44px;
+  letter-spacing:2px;
+}
+
+h2{
+  font-family:'Playfair Display', serif;
+  font-size:32px;
+}
+
+p{
+  font-size:19px;
+  line-height:1.7;
+  opacity:0.92;
+}
+
+button{
+  margin-top:28px;
+  padding:13px 32px;
+  font-size:16px;
+  border:none;
+  border-radius:30px;
+  background:#4e342e;
+  color:white;
+  cursor:pointer;
+  transition:.3s;
+}
+
+button:hover{
+  background:#6d4c41;
+  transform:scale(1.07);
+}
+
+.hidden{
+  display:none;
+}
+
+/* CONTADOR MEJORADO */
+#counter{
+  position:absolute;
+  top:25px;
+  left:50%;
+  transform:translateX(-50%);
+  font-size:26px;
+  font-weight:600;
+  letter-spacing:1px;
+  padding:10px 25px;
+  border-radius:30px;
+  background:rgba(93,64,55,0.15);
+  border:1px solid rgba(109,76,65,0.6);
+  backdrop-filter: blur(4px);
+  display:none;
+  transition: transform .2s ease;
+  z-index: 10;
+}
+
+.pulse{
+  transform:translateX(-50%) scale(1.1);
+}
+
+/* CORAZÓN AJUSTADO */
+#heart{
+  position:absolute;
+  font-size:48px;
+  cursor:pointer;
+  /* Añadimos transición para que el movimiento no sea tan brusco */
+  transition: top 0.4s ease-out, left 0.4s ease-out, font-size 0.3s ease;
+  display:none;
+  color:#5d4037;
+  filter: drop-shadow(0 0 6px rgba(93,64,55,0.9));
+  user-select: none; /* Evita que se seleccione el texto al hacer clic rápido */
+}
+
+#finalBox{
+  background: rgba(0,0,0,0.8);
+  padding:55px;
+  border-radius:22px;
+  border:1px solid #6d4c41;
+  box-shadow:0 0 60px rgba(0,0,0,1);
+  animation: fadeIn 1s ease;
+}
+
+@keyframes fadeIn{
+  from{opacity:0; transform:translateY(25px);}
+  to{opacity:1; transform:translateY(0);}
+}
+</style>
+</head>
+
+<body>
+
+<div class="screen" id="screen1">
+  <h1>CRÓNICAS DE UNA INVITACIÓN DIFERENTE</h1>
+  <p><strong>Sara Valentina Hernández Méndez</strong></p>
+  <p>
+    Esto no es una invitación común.<br><br>
+    Lo fácil lo hace cualquiera…<br>
+    pero lo memorable se construye.
+  </p>
+  <button onclick="showInstructions()">Descubrir Nivel 2</button>
+</div>
+
+<div class="screen hidden" id="screen2">
+  <h2>Nivel 2: Precisión y Paciencia 🤎</h2>
+  <p>
+    Atrapa el corazón 5 veces.<br>
+    Cada clic pondrá a prueba tu enfoque.<br>
+    Después del tercero… comenzará a moverse.<br><br>
+    El equilibrio lo es todo.
+  </p>
+  <button onclick="startGame()">Aceptar el reto</button>
+</div>
+
+<div class="screen hidden" id="finalMessage">
+  <div id="finalBox">
+    <h2>Segundo nivel conseguido 🤎</h2>
+    <p>
+      Podría simplemente invitarte a salir.<br><br>
+      Pero prefiero hacer algo que recuerdes.<br>
+      Y esto… apenas comienza.
+    </p>
+  </div>
+</div>
+
+<div id="counter">0 / 5</div>
+<div id="heart">🤎</div>
+
+<audio id="winSound">
+  <source src="https://www.soundjay.com/buttons/sounds/button-3.mp3" type="audio/mpeg">
+</audio>
+
+<script>
+let heart = document.getElementById("heart");
+let counter = document.getElementById("counter");
+let clicks = 0;
+let size = 50; 
+let autoMove;
+
+function showInstructions(){
+  document.getElementById("screen1").classList.add("hidden");
+  document.getElementById("screen2").classList.remove("hidden");
+}
+
+function startGame(){
+  document.getElementById("screen2").classList.add("hidden");
+  heart.style.display="block";
+  counter.style.display="block";
+  moveHeart();
+}
+
+function moveHeart(){
+  // Margen de seguridad para que no se salga de la pantalla
+  let margin = 100;
+  let x = Math.random() * (window.innerWidth - margin);
+  let y = Math.random() * (window.innerHeight - margin);
+  
+  // Aseguramos que no quede pegado a los bordes superiores
+  if(y < 80) y = 100;
+
+  heart.style.left = x + "px";
+  heart.style.top = y + "px";
+}
+
+heart.addEventListener("click", function(){
+  clicks++;
+  
+  // Solo reducimos el tamaño si es mayor a 30px para mantener la usabilidad
+  if(size > 32) {
+      size -= 4;
+      heart.style.fontSize = size + "px";
+  }
+
+  counter.innerHTML = clicks + " / 5";
+  counter.classList.add("pulse");
+  setTimeout(()=>counter.classList.remove("pulse"), 150);
+
+  if(clicks === 3){
+    // 1300ms es un ritmo mucho más elegante y jugable
+    autoMove = setInterval(moveHeart, 1300); 
+  }
+
+  if(clicks >= 5){
+    clearInterval(autoMove);
+    heart.style.display="none";
+    counter.style.display="none";
+    document.getElementById("winSound").play();
+    document.getElementById("finalMessage").classList.remove("hidden");
+  } else {
+    moveHeart();
+  }
+});
+</script>
+
+</body>
+</html>
